@@ -2,6 +2,8 @@
 
 Tutorial next js basic requestan Falah
 
+---
+
 ### Memulai membuat NextJS
 
 ```
@@ -24,11 +26,15 @@ npm run dev -- -p 3001
 
 Nanti langsung aja ke browser misal `localhost:3000` nanti langsung keliatan
 
+---
+
 ### React di NextJS
 
 NextJS itu juga react, jadi apapun yang ada di react bisa dilakuin di NextJS. Bedanya dimana? NextJS langsung bisa front-end back-end out of the box. Sama beberapa config lainnya yang bisa di setting, misal router, ts, atau tailwind CSS yang langsung ditawarin waktu instalasi.
 
 Jadi kalau udah bisa react, untuk front-end harusnya gampang soalnya sama aja. Malah kurasa lebih gampang yh soalnya gaperlu install manual router, ts, tailwind, sama config laman 404, loading, dll.
+
+---
 
 ### ShadCN/ui
 
@@ -52,6 +58,8 @@ npx shadcn@latest add button
 ```
 
 Nanti bakal kebikin folder components/ui/button.jsx yang bisa di custom btw. Caranya nanti yh. Coba sekarang masuk ke demo ShadCN.
+
+---
 
 ### Demo ShadCN
 
@@ -78,6 +86,8 @@ Save dan lihat di `localhost:3000` hasilnya seharusnya gini
     <img src="public/shadcn-btn.png" alt="ShadCN button" width="500">
 </div>
 Udah keliatan belum maksudnya gimana? Kita cuman butuh import button aja, pake dengan `<Button />` langsung bisa muncul. Terus warna sama desainnya? Lanjut kita ke materi warna yh.
+
+---
 
 ### Pewarnaan di globals.css
 
@@ -110,6 +120,8 @@ Hasilnya harusnya begini kalau bener
 </div>
 
 Gunakan warna sesuai kebutuhan, bisa aja pakai lebih dari 2 warna, tinggal tambahin aja misal `--ternary: oklch(73.533% 0.24506 141.604);` ngerti lah mesti tapi jangan lupa update `@theme inline` juga, tambahin ini `--color-ternary: var(--ternary);`. Eksplore aja ya gausah diingetin harusnya tawu.
+
+---
 
 ### Tailwind CSS
 
@@ -156,6 +168,8 @@ Mari kita perhatikan value `<div>` yang lainnya coba, `<div className="w-full h-
 
 Untuk melihat dokumentasi lengkap Tailwind CSS, kunjungin aja https://tailwindcss.com/ disana ada banyak yang bisa dieksplorasi
 
+---
+
 ### NextJS best practice
 
 Maksudnya disini kita bisa pake komponen-komponen bawaan NextJS yang udah dioptimasi, contoh paling sederhananya `<Image />` dan `<Link />`. Maksudnya gimana? maksudnya tuh daripada pake bawaan html yang kuno dan tidak teroptimasi, kita bisa pake NextJS komponen yang udah ada fitur misal lazy loading, caching, bla bla aku gak tawu banyak, pokoknya gitu aja dah. Praktek? gas
@@ -190,6 +204,8 @@ import Link from "next/link";
 
 Jangan lupa import yah. Lihat aja nanti hasilnya, gausah ada foto gpp yh.
 
+---
+
 ### Struktur folder
 
 NextJS juga punya struktur folder, tapi tergantung milih pake `src/` atau enggak ya waktu install NextJS. Tapi kurleb yang penting itu ada:
@@ -200,6 +216,8 @@ NextJS juga punya struktur folder, tapi tergantung milih pake `src/` atau enggak
 4. lib/ ini tempat untuk server action atau API biasanya, atau apalah yang pakai .js/.ts sering tanpa front end
 
 Jadi umumnya naroh foto itu di public/ terus komponen di components/ yang dibikinin sama shadCN langsung. lib/ gapernah kuperhatiin sih lupa, pernah bikin sendiri atau tiba tiba nongol aja kayak yang sekarang ini. Mari kita bahas folder app/ aja karena ini yang penting.
+
+---
 
 ### Direktori app/
 
@@ -260,3 +278,5 @@ Tapi kalau untuk `profile/page.js` ganti background dengan warna lain dan paragr
     <img src="public/profile.png" alt="ShadCN button" width="500">
 </div>
 Ngerti lah ya gausah lama lama, biar kita bisa lanjut ke materi berikutnya
+
+---

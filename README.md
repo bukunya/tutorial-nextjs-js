@@ -280,3 +280,178 @@ Tapi kalau untuk `profile/page.js` ganti background dengan warna lain dan paragr
 Ngerti lah ya gausah lama lama, biar kita bisa lanjut ke materi berikutnya
 
 ---
+
+### 404
+
+Ini buat bikin halaman punya indikator kalau gak ketemu, kayak error 404 page not found gitu lah, bikin aja sekali nanti langsung bisa buat segalanya. Gak wajib, cuman bagus aja. Silakan bikin `not-found.js` di direktori `app/` lalu isi kode kayak gini
+
+```
+export default function NotFound() {
+  return (
+    <div className="w-full h-screen flex flex-col items-center justify-center">
+      <p>404, gk ketemu</p>
+    </div>
+  );
+}
+```
+
+Save, lalu ke browser ketik url ngawur, misal `http://localhost:3000/icikiwir`, hasilnya bakal gini
+
+<div align="center">
+    <img src="public/404.png" alt="ShadCN button" width="500">
+</div>
+
+Berlaku untuk semua route yh gak cuman root doang
+
+## Mulai Coding
+
+### Conditional rendering
+
+Materi kali ini kita coba conditional rendering, misal kalau ada user belum login, kita tampilin data A, kalau udah login tampilin data B. Misal navbar belum login cuman ada logo perusahaan sama tombol login, kalau udah login tambahin misal profile, dashboard, dll. Langsung praktik aja ya, bikin direktori dan file baru namanya `conditional-rendering/page.js` isi dengan
+
+```
+import React from "react";
+
+const page = () => {
+  const isLoggedIn = false;
+  return (
+    <div className="w-full h-screen flex flex-col items-center justify-center">
+      {isLoggedIn ? <p>Welcome back!</p> : <p>Please log in to continue.</p>}
+    </div>
+  );
+};
+
+export default page;
+```
+
+Ini secara simpel ya, dicoba dulu aja, toggle manual dari `isLoggedIn = false` ke `true` hasilnya harusnya begini kalau false:
+
+<div align="center">
+    <img src="public/cr-notLoggedIn.png" alt="ShadCN button" width="500">
+</div>
+Sedangkan kalau true:
+<div align="center">
+    <img src="public/cr-loggedIn.png" alt="ShadCN button" width="500">
+</div>
+
+Dapet gak konsepnya? maksud dari `{isLoggedIn ? <p>Welcome back!</p> : <p>Please log in to continue.</p>}` bahasa literalnya tu gini `{apakah sudah login ? tampilkan ini bila sudah : tampilkan ini jika belum}` atau `{kondisi ? show if true : show if not}` Jadi gimana kasus login tadi bila diimplementasikan ke dunia nyata? Sebelum masuk secara rill, mungkin aku mau ngasih tau best practiceku yaitu "Try to not hard code data"
+
+### Bermain dengan data
+
+Di dunia nyata (jir dunia nyata), kita biasa ngambil data dari API, formatnya json atau apalah, bentuknya tu misal gini
+
+```
+const data = {
+  "food" : [
+    "rendang padang",
+    "rendang manis jawir",
+    "icikiwir"
+  ],
+  "drink" : {
+    "healthy" : [
+      "bebsi",
+      "point coffee",
+      "water"
+    ],
+    "shit" : [
+      "vodka",
+      "beer"
+    ]
+  }
+}
+```
+
+Untuk ngaksesnya nanti misal kita mau ngambil "rendang padang", kita bisa pake `data.food[0]` ngerti kan kayak di PPBO atau python dulu? Udah keliatan belum maksudku dimana? Gini aja deh, tambahin
+
+```
+{data.food.map((item) => (
+  <p key={item}>{item}</p>
+))}
+```
+
+di bawah yang `isLoggedIn`, hasilnya harusnya kayak gini
+
+<div align="center">
+    <img src="public/dataMap.png" alt="ShadCN button" width="500">
+</div>
+
+Semua makanan yang ada bakal ditampilin, kayak `@foreach` di php, atau di python gini deh
+
+```
+foods = ["sad food", "happy food", "regular food"]
+for food in foods:
+  print(food)
+```
+
+gitu, paham kan? udah keliatan belum kalau bakal kita apain kalau kita gabung conditional rendering sama bermain dengan data? paham? lanjut
+
+### Fitur login dummy gabungan conditional rendering sama bermain dengan data
+
+Kita tambahin konten `conditional-rendering/page.js` ya, aku mau nambah data ini di dalem fungsi export default
+
+```
+const blmLogin = {
+  "gambar" : "public/foto.jpg",
+  "login" : "#"
+}
+
+const sdhLogin = {
+  "gambar" : "public/foto1.jpg",
+  "dashboard" : "/dashboard",
+  "profil" : "/profil",
+  "logout" : "#"
+}
+```
+
+Ganti seluruh return dari fungsi export default menjadi
+
+```
+<div className="w-full h-screen flex flex-col items-center justify-center">
+  <Image
+    src={isLoggedIn ? sdhLogin.gambar : blmLogin.gambar}
+    width={400}
+    height={400}
+    alt="foto"
+  />
+  {isLoggedIn ? (
+    <div>
+      <Link href={sdhLogin.dashboard}>Dashboard</Link>
+      <Link href={sdhLogin.profil}>Profil</Link>
+      <Link href={sdhLogin.logout}>Logout</Link>
+    </div>
+  ) : (
+    <Link href={blmLogin.login}>Login</Link>
+  )}
+</div>
+```
+
+Jangan lupa importnya ya, ada dua, `Image` sama `Link`. Toggle manual aja `isLoggedIn`-nya hasilnya kalau true
+
+<div align="center">
+    <img src="public/cr-data-true.png" alt="ShadCN button" width="500">
+</div>
+Kalau false
+<div align="center">
+    <img src="public/cr-data-false.png" alt="ShadCN button" width="500">
+</div>
+
+Implikasi dunia nyatanya gimana king? gini, kalau misal kalian pake OAuth atau bikin session sendiri, misal ambil kasus OAuth dari https://authjs.dev nanti untuk manggil session bisa pake
+
+```
+async function autentikasi() {
+  const session = await auth();
+
+  if (session) {
+    const fetchdata = await prisma.user.findMany()
+
+    return (
+      <p>{fetchdata.username}</p>
+      <p>{fetchdata.createdAt}</p>
+    )
+  }
+
+  return null;
+}
+```
+
+Intinya bakal ngefetch data kalau ada session gitulah, gak ngerti? nanti ku-demo-in pake project gwejh sendiri

@@ -303,6 +303,198 @@ Save, lalu ke browser ketik url ngawur, misal `http://localhost:3000/icikiwir`, 
 
 Berlaku untuk semua route yh gak cuman root doang
 
+---
+
+### React Hooks
+
+Disini kita bakal belajar dua react hooks yang paling penting dan paling sering digunakan untuk aplikasi NextJS, yaitu useState dan useEffect.
+
+useState() hooks digunakan untuk nyimpen data, kalau useEffect biasanya untuk ngatur side effect apabila terdapat perubahan pada dependency-nya. Maksudnya gimana? langsung praktek aja lah gatau juga jujur jelasinnya gimana. Buat dir `hooks/page.js` dalam dir `app/`. Kemudian isikan ini
+
+```
+"use client";
+import React from "react";
+
+const page = () => {
+  let name = "icikiwir";
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    name = e.target.name.value;
+    console.log(name);
+  };
+  return (
+    <div className="w-full h-screen flex flex-col items-center justify-center">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          defaultValue={name}
+          className="border p-2"
+        />
+        <button type="submit" className="border">
+          Submit
+        </button>
+      </form>
+      <p className="mt-4">Name: {name}</p>
+    </div>
+  );
+};
+
+export default page;
+```
+
+save, buka konsol, lalu ganti nama menjadi apapun yang diinginkan, lalu submit. Nama yang sudah diupdate tidak akan terlihat terupdate padahal di console sudah menunjukkan nama sudah terganti. lihat contoh berikut
+
+<div align="center">
+    <img src="public/hook1.png" alt="ShadCN button" width="500">
+</div>
+sebelum disubmit
+<div align="center">
+    <img src="public/hook2.png" alt="ShadCN button" width="500">
+</div>
+setelah disubmit, nama belum ganti. Hal ini disebabkan oleh react yang tidak me re-render halaman apabila terjadi submit data sehingga data yang sudah disubmit tanpa perlakuan khusus akan tidak akan terlihat. Solusinya gimana? pake useState, ubah kode menjadi begini
+
+```
+const [name, setName] = React.useState("Afif");
+const handleSubmit = (e) => {
+  e.preventDefault();
+  setName(e.target.name.value);
+  console.log(name);
+};
+```
+
+lalu coba jalankan, hasilnya akan seperti ini
+
+<div align="center">
+    <img src="public/hook3.png" alt="ShadCN button" width="500">
+</div>
+sebelum disubmit
+<div align="center">
+    <img src="public/hook4.png" alt="ShadCN button" width="500">
+</div>
+setelah disubmit, hasilnya akan berubah menjadi apapun yang kita submit, pada gambar dari nama "Afif" berubah menjadi "Nida". Hal ini sudah benar, namun terdapat bug yang dapat dilihat pada console. Yaitu nama yang ter-console adalah "Afif" padahal seharusnya "Nida". Hal ini disebabkan oleh useState yang asinkron, sedangkan "console.log" sinkron, bahasa gampangnya sebelum useState selesai mengganti nama, "console.log" udah ngeprint nama terakhir, anggepannya keduluan sama "console.log" gitu. Solusinya gimana pakdhe? pake useEffect.
+
+useEffect digunakan buat nampilin suatu efek apabila dependensinya terupdate. Jadi intinya dia bakal nunggu sampe `nama`-nya bener bener keganti baru dia jalanin console.log nya. Ubah aja kodenya jadi begini
+
+```
+const handleSubmit = (e) => {
+    e.preventDefault();
+    setName(e.target.name.value);
+  };
+  React.useEffect(() => {
+    console.log(name);
+  }, [name]);
+```
+
+liat aja hasilnya, tapi ada bug sih sebetulnya karena nama yang kita tentuin di awal langsung ke log, tapi se-ngehku ga ngaruh samsek. Ku demo in aja deh malas sudah capek. Jadi intinya tu useState tu ngerender ulang, useEffect tu ngasih side effect. Pokoknya gitu.
+
+---
+
+### Client dan Server
+
+Kalau kalian notice, aku ada ngasih `"use client";` di beberapa file, beberapa yang lain enggak. Intinya tu to, kalau kalian lagi slicing tanpa ada backend-nya, kalian bisa pake `"use client";` untuk bikin halamannya di-render di browser dan bukan di server. Umumnya NextJS initally bikin semua jadi `"use server";` yang mana itu untuk backend, tapi karena ini tutorial front-end jadinya gausah, pake `"use client";` aja pokoknya kalo front-end.
+
+---
+
+### Media Query
+
+@media di NextJS udah dibikin gampang kalau nginstall tailwind, di tailwind sendiri mengusung mobile-first jadi kalian diharapkan untuk bikin mobile dulu daripada dekstop, tapi kita tau itu bullshit ya.
+
+Jadi maksudnya mobile-first yang perlu kita perhatikan itu cara tailwind nyiapin media query. Tailwind punya built in media query dengan ukuran `sm:` utk >small `md:` utk >medium `lg:` untuk large `xl:` untuk lebih gede lagi and so on. Jadi sm: tu bukan untuk small screen, tapi lebih besar dari small screen.
+
+Kita coba praktik yh, bikin kode ini di `app/mq/page.js`
+
+```
+import React from "react";
+
+const page = () => {
+  return (
+    <div className="w-full h-screen flex flex-col justify-center">
+      <div className="w-full sm:w-8 h-[5vh] bg-red-500" />
+      <div className="w-full md:w-32 h-[5vh] bg-green-500" />
+      <div className="w-full lg:w-96 h-[5vh] bg-yellow-500" />
+      <div className="w-full xl:w-2xl h-[5vh] bg-blue-500" />
+    </div>
+  );
+};
+
+export default page;
+```
+
+Aku akan menjelaskan maksud dari salah satu tailwind diatas, `w-full sm:w-8 h-[5vh] bg-red-500` maksud dari kode ini adalah, default `w-full`(`width: 100%`) jika melebihi ukuran `sm:`(melebihi ukuran hp) maka jadikan panjangnya `40rem`, `h-[5vh]` artinya tinggi `5vh`, `bg-red-500` artinya background warna merah kode 500.
+
+hasil dari kode diatas bisa dilihat disini
+
+<div align="center">
+    <img src="public/mq1.png" alt="ShadCN button" width="500">
+</div>
+Karena `width` dari halaman diatas masih dalam batas lg:, maka merah dan hijau masih akan tetap pada ukurannya sedangkan kuning dan biru berubah menjadi width 100%
+
+---
+
+### Keyframe
+
+Keyframe di NextJS/React agak tricky, kita define sendiri di `<style jsx>` contohnya gini
+
+```
+import React from "react";
+import asteriskImg from "@/../public/assets/asterisk.png";
+import Image from "next/image";
+
+function Asterisks() {
+  return (
+    <>
+      <Image
+        src={asteriskImg}
+        alt="Asterisks"
+        style={{
+          animation: "floating 2.8s ease-in-out infinite, rotateAnimation 3s linear infinite, scaleAnimation 4s ease-in-out infinite",
+        }}
+      />
+      <style jsx>{`
+        @keyframes floating {
+          0%, 100% {
+            transform: translateY(0px) rotate(4deg);
+          }
+          50% {
+            transform: translateY(-12px) rotate(4deg);
+          }
+        }
+
+        @keyframes rotateAnimation {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes scaleAnimation {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.2);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+      `}</style>
+    </>
+  );
+}
+
+export default Asterisks;
+```
+
+Si `<Image>` ini gambarnya, konten di dalemnya sebenernya basic aja, cuman ada bagian `style={{bla, bla, bla}}` yang emang agak kompleks karena biasa kalau di react itu pake library kayak framer motion, aos, dll tapi aku yo gak suka animasi aneh aneh kecuali Falah, jadi jarang banget make jujur aja jadi bukan expertise ku.
+
+Yang style tadi itu make css biasa ya, kalau di tailwind setauku gaada yang kompleks dan random gitu, jadi mau ga mau pake `<style jsx>` tadi. Pokoknya kalian harus punya fundamental animasi css biasa yang mana aku ga begitu punya sih kwkwkkwwk.
+
+Ngomong-ngomong disini gaada demo soalnya aku males, kalian bisa ganti yang `asterisk` tadi jadi nama foto kalian, bebas, mau pake fotoku ya gaskan aja, mungkin aku demoin kalau tatap muka.
+
 ## Mulai Coding
 
 ### Conditional rendering
@@ -455,3 +647,84 @@ async function autentikasi() {
 ```
 
 Intinya bakal ngefetch data kalau ada session gitulah, gak ngerti? nanti ku-demo-in pake project gwejh sendiri
+
+### Navbar custom
+
+Disini bakal kubikinin navbar custom, requestannya falah. Jadi dia mau kayak navbar custom ted https://techenthusiastday.com yang mana aku juga developer front end disitu. Jadi basicnya dulu ya.
+
+Langkah dari navbarnya itu dimulai dari tampilan desktop dulu, mari kita bikin page khusus navbar di `app/nav-demo/page.js`
+
+```
+import Link from "next/link";
+import React from "react";
+
+const page = () => {
+  return (
+    <div className="w-full h-screen bg-blue-200">
+      {/* Navbar */}
+      <div className="w-full h-16 bg-white flex items-center justify-center px-4">
+        <div className="container flex flex-row justify-between items-center mx-auto">
+          <h1 className="text-2xl">My Navbar</h1>
+          <Link href="/" className="">
+            Home
+          </Link>
+          <Link href="/" className="">
+            Home1
+          </Link>
+          <Link href="/" className="">
+            Home2
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default page;
+```
+
+cek hasilnya harusnya gini
+
+<div align="center">
+    <img src="public/navbar1.png" alt="ShadCN button" width="500">
+</div>
+
+Tujuan saat ini adalah untuk membuatnya jadi kecil kalau udah di scroll kayak navbarnya TED. Pertama tambahin scroll listener dulu
+
+```
+useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+```
+
+Ini akan ngasih tau kalau halaman udah di scroll atau belum. jadi `const handleScroll` itu buat nyimpen value `true/false` buat tau udah di scroll atau belum. Kemudian si `handleScroll();` itu buat inisiasi waktu mounting, terus yang `window.addEventListener` itu untuk ngasih event listener buat efek scroll, jadi tiap scroll nanti diupdate lah statusnya si `handleScroll`, terus yang `return` itu buat ngehandle kalau pagenya ditutup/pindah, yang mana kalau ditutup/pindah kan udah ga butuh navbarnya lagi ya gak.
+
+Lanjut aja gimana kita ngasih efek jadi kecil gitu, simple banget sih, cuman ubah jadi gini
+
+```
+{/* Navbar */}
+<div
+  className={`${
+    isScrolled ? "w-1/2" : "w-full"
+  } h-16 bg-white flex items-center justify-center px-4 m-auto sticky top-0`}
+>
+```
+
+tepat di bawah comment Navbar tadi. Udah deh hasilnya gini
+
+<div align="center">
+    <img src="public/navbar2.png" alt="ShadCN button" width="500">
+</div>
+diatas sebelum scroll, dibawah setelah scroll
+<div align="center">
+    <img src="public/navbar3.png" alt="ShadCN button" width="500">
+</div>
+
+---
+
+# Request apa lagi? demo besok jumat ya abis jumatan
